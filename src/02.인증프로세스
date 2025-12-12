@@ -1,0 +1,50 @@
+1장 폼 인증 - formLogin() & UsernamePasswordAuthenticationFilter
+
+✅ 폼 인증
+- HTTP 기반의 폼 로그인 인증 메커니즘을 활성화하는 API
+- 사용자 인증을 위한 사용자 정의 로그인 페이지를 쉽게 구현할 수 있다.
+- 기본적으로는 스프링 시큐리티가 제공하는 기본 로그인 페이지를 사용
+- 사용자 이름과 비밀번호 필드가 포함된 간단한 로그인 양식을 제공한다
+- 사용자는 웹 폼을 통해 자격증명(사용자 이름과 비밀번호)을 제공하고
+Spring Security는 HttpServletRequest에서 이 값을 얻어온다.
+
+✅ 폼 인증 흐름
+        GET "/user"
+Client ----------------> SecurityFilterChain --------------> server
+                         1. 권한검사필터
+                         2. 접근 예외 발생
+                         3. 예외처리필터
+                         4. 인증시작
+                         5. 로그인페이지(인증시도)
+
+✅ formLogin() API
+HttpSecurity.formLogin(httpSecurityFormLoginConfigurer -> httpSecurityFormLoginConfigurer
+            .loginPage("/loginPage")                            //사용자 정의 로그인 페이지로 전환, 기존 로그인페이지 무시
+            .loginProcessingUrl("/loginProc")                   //사용자 이름과 비밀번호를 검증할 URL 지정
+            .defaultSuccessUrl("/", [alwaysUse])                //로그인 성공 이후 이동페이지
+
+            .failureUrl("/failed")                              //인증실패후 이동 페이지
+            .usernameParameter("username")                      //인증시 아이디를 찾기위해 확인하는 HTTP 매개변수
+            .passwordParameter("password")                      //인증시 비밀번호를 찾기위해 확인하는 HTTP 매개변수
+            .failureHandler(AuthenticationSuccessHandler)       //인증 실패 시 사용할 handler
+
+            .successHandler(AuthenticationFailureHandler)       //인증 성공시 사용할 handler
+
+            .permitAll()                                        //로그인 관련 메소드에 대한 모든 사용자의 접근을 허용 함
+
+✅ 폼 인증 필터
+- AbstractAuthenticationProcessingFilter 클래스를 사용자의 자격 증명을 인증하는 기본 필터로 사용.
+- UsernamePasswordAuthenticationFilter는 AbstractAuthenticationProcessingFilter 를 확장한 클래스로서
+HttpServletRequest에서 제출된 사용자 이름과 비밀번호로부터 인증을 수행한다.
+- 인증 프로세스가 초기화 될 때 로그인 페이지와 로그아웃 페이지 생성을 위한 DefaultLoginPageGenerationFilter 및
+DefaultLogoutPageGeneratingFilter가 초기화된다.
+
+2장 기본 인증 - HttpBasic() & BasicAuthenticationFilter
+
+3장 기억하기 인증 - RemeberMe() & RememberMeAuthenticationFilter
+
+4장 익명 인증 사용자 - Anonymous() & AnonymousAuthenticationFilter
+
+5장 로그아웃 - logout() & LogoutFilter
+
+6장 요청캐시 - RequestCache / SavedRequest & RequestCacheAwareFilter
