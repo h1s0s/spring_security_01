@@ -1,0 +1,31 @@
+1장 시큐리티 빌더(SecurityBuilder) / 시큐리티컨피규어(SecurityConfigurer)
+
+#개념#########
+
+스프링 시큐리티는 초기화 때 인증/인가와 관련된 여러가지 작업들을 수행 함.
+이것들을 종합적으로 처리하는 클래스가 이 두개임.
+스프링 시큐리티는 모든 인증, 인가를 필터에서 처리함.
+한마디로 스프링 시큐리티는 필터 기반 보안 프레임워크이다라고 이해해도 무방함.
+
+1. 시큐리티 빌더(SecurityBuilder) (HttpSecurity, WebSecurity, AuthenticationManagerbuilder)
+- 빌더 클래스로서 웹 보안을 구성하는 빈 객체와 설정 클래스들을 생성하는 역할. 대표적으로 WebSecurity, HttpSecurity★가 있다.
+- 시큐리티컨피규어를 참조하고 있음. 참조한다는 것은 시큐리티컨피규어를 사용하여 빈 객체와 설정클래스를 생성한다는 말.
+
+2. 시큐리티컨피규어(SecurityConfigurer, 설정클래스)
+- Http 요청과 관련된 보안처리를 담당하는 필터를 생성(중요)
+  (※ 스프링 시큐리티는 모든 인증, 인가를 필터에서 처리함)
+- 여러 초기화 설정에 관여한다
+- 인증 및 인가 초기화 작업을 진행함.
+- 구현체로 SecurityContextConfigurer, HttpBasicConfigurer, FormLoginConfigurer, CsrfConfigurer, ExceptionHandlingConfigurer, AnonymousConfigurer가 있음.
+- 이 구현체들이 가지고있는 여러가지 기능들을 진행시키면서 초기 작업들을 이끌어가는 것.
+
+
+#실행 구조##########
+1. AutoConfiguration(자동설정) 클래스 -> build() : 시큐리티 빌더 클래스 생성
+: 자동 설정에 의해 SecurityBuilder 클래스를 만듬.
+: HttpSecurity 같은 클래스도 이때 자동설정에 의해서 빈 객체로 생성됨.
+
+2.SecurityBuilder 클래스 -> SecurityConfigurer를 기반으로 설정 클래스들을 생성하며
+init, configure 메소드를 사용하여 초기화 작업을 진행합니다(필터들을 생성합니다).
+※ Configurer(설정 클래스)마다 각각 필터가 있음 1:1 매칭
+
