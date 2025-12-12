@@ -40,3 +40,24 @@ init, configure 메소드를 사용하여 초기화 작업을 진행합니다(�
 - WebSecurityConfiguration에서 생성한 클래스
 - SecurityFilterChain 빈을 SecurityBuilder에 저장함. 이유는, 이 것이 build()를 실행하면
 FilterChainProxy 생성자에게 전달하기 위함
+
+3장 DelegatingFilterProxy/FilterChainProxy
+
+1.Filter
+- 서블릿 필터는 웹 애플리케이션에서 클라이언트의 요청(ServletReqeust)과 서버의 응답(ServletResponse)을 가공하거나 검사하는데 사용되는 구성 요소
+- 클라이언트의 요청이 서블릿에 도달하기 전이나 응답을 클라이언트에게 보내기 전에 특정 작업을 수행할 수 있다.
+- 서블릿 컨테이너(WAS, 흔히 tomcat)에서 실행되고 종료된다.
+- filter 인터페이스를 보면, init, doFilter, destroy가 있음. init은 생성시 필요한 작업, destroy는 제거될 때 필요한 작업
+doFilter는 요청 전후에 대한 작업
+
+2.DelegatingFilterProxy
+- 스프링의 의존성 주입 및 빈 관리 기능과 연동되도록 설계된 필터
+- 스프링에서 사용되는 특별한 서블릿 필터, 서블릿 컨테이너와 스프링 애플리케이션 컨텍스트 간의 연결고리 역할을 하는 필터
+- "springSecurityFilterChain" 이름으로 생성된 빈을 ApplicationContext에서 찾아 요청을 위임한다
+- 실제 보안 처리를 수행하지 않는다
+- Filter는 원래 SevletContainer에서 생성되고 지워짐, Spring Container이랑은 상관 없움.
+필터에서는 스프링 기능을 사용할 수 없음, DI/AOP기능 사용 불가
+필터에서 DI나 AOP같은 스프링의 기능들을 사용할 수 있게끔 도와주는 클래스임.
+
+3.FilterChainProxy
+- SpringSecurityFilterChain의 이름으로 생성되는 필터 빈으로서, DelegatingFilterProxy로부터 요청을 위임받고 보안처리 역할을 한다.
